@@ -6,16 +6,33 @@
 //
 
 import UIKit
+import UserNotifications  //追加１５　ローカル通知設定
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+//↑追加１８フォアグラウンドでも通知　UNUserNotificationCenterDelegateを追加
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+       
+        //ユーザーに許可を求める-----------------ここから追加１５
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+            //Enable ordisable features based on authorization
+        }
+        //-------------------------------ここまで追加１５
+        
+        center.delegate = self  //追加１８（２）
+        
         return true
     }
+    
+    //↓--------追加１８(３）アプリがフォアグラウンド（表示中）の時に通知を受け取ると呼ばれるメソッド
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)  {
+        completionHandler([.banner, .list, .sound])
+    }
+    //------------------ここまで追加１８(３）
 
     // MARK: UISceneSession Lifecycle
 
